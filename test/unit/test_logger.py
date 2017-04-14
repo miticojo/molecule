@@ -18,77 +18,59 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import colorama
 import pytest
 
 from molecule import logger
 
 
-def test_info(capsys):
-    log = logger.get_logger(__name__)
+@pytest.fixture
+def name(request):
+    return request.function.__name__
+
+
+def test_info(name, capsys):
+    log = logger.get_logger(name)
     log.info('foo')
     stdout, _ = capsys.readouterr()
 
-    print('--> {}{}'.format(colorama.Fore.CYAN, 'foo'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stdout
+    assert 'foo' in stdout
 
 
-def test_out(capsys):
-    log = logger.get_logger(__name__)
+def test_out(name, capsys):
+    log = logger.get_logger(name)
     log.out('foo')
-
     stdout, _ = capsys.readouterr()
 
-    assert '    foo\n' == stdout
+    assert 'foo' in stdout
 
 
-def test_warn(capsys):
-    log = logger.get_logger(__name__)
+def test_warn(name, capsys):
+    log = logger.get_logger(name)
     log.warn('foo')
-
     stdout, _ = capsys.readouterr()
 
-    print('{}{}'.format(colorama.Fore.YELLOW, 'foo'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stdout
+    assert 'foo' in stdout
 
 
-@pytest.mark.skip(reason='TODO(retr0h): understand how to test this')
-def test_error(capsys):
-    log = logger.get_logger(__name__)
+def test_error(name, capsys):
+    log = logger.get_logger(name)
     log.error('foo')
-
     _, stderr = capsys.readouterr()
 
-    print('{}{}'.format(colorama.fore.red, 'foo'.rstrip()))
-    _, x = capsys.readouterr()
-
-    assert x == stderr
+    assert 'foo' in stderr
 
 
-@pytest.mark.skip(reason='TODO(retr0h): understand how to test this')
-def test_critical(capsys):
-    log = logger.get_logger(__name__)
+def test_critical(name, capsys):
+    log = logger.get_logger(name)
     log.critical('foo')
-
     _, stderr = capsys.readouterr()
 
-    print('{}error: {}'.format(colorama.fore.red, 'foo'.rstrip()))
-    _, x = capsys.readouterr()
-
-    assert x == stderr
+    assert 'ERROR: foo' in stderr
 
 
-def test_success(capsys):
-    log = logger.get_logger(__name__)
+def test_success(name, capsys):
+    log = logger.get_logger(name)
     log.success('foo')
-
     stdout, _ = capsys.readouterr()
 
-    print('{}{}'.format(colorama.Fore.GREEN, 'foo'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stdout
+    assert 'foo' in stdout
